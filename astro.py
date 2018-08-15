@@ -3,39 +3,47 @@
 import pygame
 import random
 import sys
+import os
 
-from livewires import games, color
+# from livewires import games, color
+from superwires import games, color
 
 
+games.init(screen_width=640, screen_height=480, fps=50)
 
 
-games.init(screen_width = 640, screen_height = 480, fps = 50)
+PROJECT_ROOT_INDIRECT = os.path.join(os.path.dirname(os.path.realpath(__file__)), './')
+PROJECT_ROOT = os.path.realpath(PROJECT_ROOT_INDIRECT)
+FILE_SERVING_ROOT = os.path.join(PROJECT_ROOT, 'feat')
+print(FILE_SERVING_ROOT)
 
 
 class Explosion(games.Animation):
     """ Explosion animation """
-    sound = games.load_sound("eksplozja.wav")
-    images = ["eksplozja1.bmp",
-              "eksplozja2.bmp",
-              "eksplozja3.bmp",
-              "eksplozja4.bmp",
-              "eksplozja5.bmp",
-              "eksplozja6.bmp",
-              "eksplozja7.bmp",
-              "eksplozja8.bmp",
-              "eksplozja9.bmp"]
+    sound = games.load_sound(os.path.join(FILE_SERVING_ROOT, 'eksplozja.wav'))
+    images = [
+        os.path.join(FILE_SERVING_ROOT, "eksplozja1.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja2.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja3.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja4.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja5.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja6.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja7.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja8.bmp"),
+        os.path.join(FILE_SERVING_ROOT, "eksplozja9.bmp")
+    ]
 
     def __init__(self, x, y):
-        super(Explosion, self).__init__(images = Explosion.images,
+        super(Explosion, self).__init__(images=Explosion.images,
                                         x = x, y = y,
                                         repeat_interval = 4, n_repeats = 1,
                                         is_collideable = False)
         Explosion.sound.play()
 
+
 class Ship(games.Sprite):
     """Sheep Object"""
-    image = games.load_image("statek.bmp")
-
+    image = games.load_image(os.path.join(FILE_SERVING_ROOT, 'statek.bmp'))
 
     def __init__(self, game, x, y):
         """ Ship """
@@ -79,15 +87,16 @@ class Ship(games.Sprite):
         self.game.end()
 
 
-
 class Asteroid(games.Sprite):
     """ Asteroids """
     SMALL = 1
     MEDIUM = 2
     LARGE = 3
-    images = {SMALL  : games.load_image("asteroida_mala.bmp"),
-              MEDIUM : games.load_image("asteroida_sred.bmp"),
-              LARGE  : games.load_image("asteroida_duza.bmp") }
+    images = {
+        SMALL: games.load_image(os.path.join(FILE_SERVING_ROOT, 'asteroida_mala.bmp')),
+        MEDIUM: games.load_image(os.path.join(FILE_SERVING_ROOT, 'asteroida_sred.bmp')),
+        LARGE: games.load_image(os.path.join(FILE_SERVING_ROOT, 'asteroida_duza.bmp')),
+      }
 
     SPEED = 2
     POINTS = 30
@@ -100,10 +109,10 @@ class Asteroid(games.Sprite):
 
         super(Asteroid, self).__init__(
             image = Asteroid.images[size],
-            x = x,
-            y = y,
-            dx = 0, #random.choice([1, -1]) * Asteroid.SPEED * random.random()/size,
-            dy = random.randint(1,Asteroid.SPEED))
+            x=x,
+            y=y,
+            dx=0, #random.choice([1, -1]) * Asteroid.SPEED * random.random()/size,
+            dy=random.randint(1, Asteroid.SPEED))
 
         self.game = game
         self.size = size
@@ -112,14 +121,12 @@ class Asteroid(games.Sprite):
         if self.top > games.screen.height:
             self.die()
 
-
     def die(self):
         """ Destroy """
         Asteroid.total -= 1
 
         self.game.score.value += Asteroid.POINTS
         self.game.score.right = games.screen.width - 10
-
 
         new_explosion = Explosion(x = self.x, y = self.y)
         games.screen.add(new_explosion)
@@ -137,7 +144,7 @@ class Game(object):
         self.level = 0
 
         # sound load new level
-        self.sound = games.load_sound("poziom.wav")
+        self.sound = games.load_sound(os.path.join(FILE_SERVING_ROOT, "poziom.wav"))
 
         # score
         self.score = games.Text(value = 0,
@@ -155,8 +162,8 @@ class Game(object):
 
     def play(self):
         """ play """
-
-        nebula_image = games.load_image("mglawica.jpg")
+        print(os.path.join(FILE_SERVING_ROOT, "mglawica.jpg"))
+        nebula_image = games.load_image(os.path.join(FILE_SERVING_ROOT, "mglawica.jpg"))
         games.screen.background = nebula_image
 
         # level 1
